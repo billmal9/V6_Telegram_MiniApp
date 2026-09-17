@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V6 Trading Bot</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .status {
+            margin-bottom: 20px;
+            color: #00ff66;
+        }
+
+        .card {
+            background: #222;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 7px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .start {
+            background: #00c853;
+            color: white;
+        }
+
+        .pause {
+            background: #ff9800;
+            color: white;
+        }
+
+        .close {
+            background: #f44336;
+            color: white;
+        }
+
+        .normal {
+            background: #333;
+            color: white;
+        }
+
+        #message {
+            margin-top: 15px;
+            min-height: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>V6 TRADING BOT</h1>
+
+    <div class="status">
+        🟢 EA CONNECTED
+    </div>
+
+    <div class="card">
+        Balance: $0.00
+    </div>
+
+    <div class="card">
+        Floating Profit: $0.00
+    </div>
+
+    <div class="card">
+        Open Positions: 0
+    </div>
+
+    <div class="card">
+        Total Lots: 0.00
+    </div>
+
+    <button class="start" onclick="sendCommand('start')">
+        🟢 START TRADING
+    </button>
+
+    <button class="pause" onclick="sendCommand('pause')">
+        ⏸️ PAUSE TRADING
+    </button>
+
+    <button class="close" onclick="sendCommand('closeall')">
+        🔴 CLOSE ALL
+    </button>
+
+    <button class="normal">
+        📊 TRADES
+    </button>
+
+    <button class="normal">
+        ⚙️ SETTINGS
+    </button>
+
+    <div id="message"></div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+
+        tg.ready();
+        tg.expand();
+
+        async function sendCommand(command) {
+
+            const message = document.getElementById("message");
+
+            message.innerText = "Sending command...";
+
+            try {
+
+                const response = await fetch(
+                    "/.netlify/functions/command",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            command: command
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (response.ok) {
+
+                    message.innerText =
+                        "✅ " + data.message +
+                        " (" + data.command + ")";
+
+                } else {
+
+                    message.innerText =
+                        "❌ Error: " + (data.error || "Unknown error");
+                }
+
+            } catch (error) {
+
+                message.innerText =
+                    "❌ Connection error";
+            }
+        }
+    </script>
+
+</body>
+</html>
