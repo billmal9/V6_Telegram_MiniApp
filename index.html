@@ -121,6 +121,17 @@
 
         tg.ready();
         tg.expand();
+        const telegramStatus = document.createElement("div");
+telegramStatus.style.margin = "15px 0";
+telegramStatus.style.fontWeight = "bold";
+
+if (tg.initData && tg.initData.length > 0) {
+    telegramStatus.innerText = "Telegram authentication: RECEIVED ✅";
+} else {
+    telegramStatus.innerText = "Telegram authentication: NOT RECEIVED ❌";
+}
+
+document.body.insertBefore(telegramStatus, document.querySelector("button"));
 
         async function sendCommand(command) {
 
